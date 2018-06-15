@@ -35,6 +35,14 @@ func RecieveMessageHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("Hey there! I just texted back."))
+
+	_, err = CreateDatabaseConnection()
+	if err != nil {
+		httpErrorHandler(w, err)
+		return
+	}
+	fmt.Println("it worked?")
+	// database.
 }
 
 func httpErrorHandlerWithCode(w http.ResponseWriter, err error, code int) {
