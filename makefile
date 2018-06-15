@@ -4,4 +4,4 @@ all:
 
 install:
 	go get -u github.com/gorilla/mux
-	touch secrets/AccountSid
+	mkdir -p secrets && touch secrets/AccountSid
