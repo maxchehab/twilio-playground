@@ -4,3 +4,4 @@ all:
 
 install:
 	go get -u github.com/gorilla/mux
+	touch secrets/AccountSid
