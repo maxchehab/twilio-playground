@@ -33,16 +33,26 @@ func RecieveMessageHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("Hey there! I just texted back."))
+	log.Printf("Incomming message from %s:\n%s", from, body)
 
-	_, err = CreateDatabaseConnection()
+	user, err := SaveToDatabase(from, body)
 	if err != nil {
 		httpErrorHandler(w, err)
 		return
 	}
-	fmt.Println("it worked?")
-	// database.
+
+	message, err := GenerateOutgoingMessage(user)
+	if err != nil {
+		httpErrorHandler(w, err)
+		return
+	}
+
+	sendMessage(w, message)
+}
+
+func sendMessage(w http.ResponseWriter, message string) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte(message))
 }
 
 func httpErrorHandlerWithCode(w http.ResponseWriter, err error, code int) {

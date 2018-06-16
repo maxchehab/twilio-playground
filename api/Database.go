@@ -2,72 +2,60 @@ package main
 
 import (
 	"log"
+	"models"
 	"time"
-	"twilio-playground/api/models"
 
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-// CreateDatabaseConnection creates a connection the database
-func CreateDatabaseConnection() (db *gorm.DB, err error) {
-	db, err = gorm.Open("postgres", "postgresql://myapp:dbpass@localhost:15432/myapp")
-	if err != nil {
-		return
-	}
-
-	// Ping function checks the database connectivity
-	err = db.DB().Ping()
-	return
-}
-
-func addDatabase(db *gorm.DB, dbname string) error {
-	// create database with dbname, won't do anything if db already exists
-	db.Exec("CREATE DATABASE " + dbname)
-
-	// connect to newly created DB (now has dbname param)
-	connectionParams := "dbname=" + dbname + " user=docker password=docker sslmode=disable host=db"
-	_, err := gorm.Open("postgres", connectionParams)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
+var database *gorm.DB
 
 // IntializeDatabase creates tables for all of the models
 func IntializeDatabase() (err error) {
-	var db *gorm.DB
 	// set up DB connection
 	// then attempt to connect 10 times over 10 seconds
 	connectionParams := "user=docker password=docker sslmode=disable host=db"
-	for i := 0; i < 10; i++ {
-		log.Printf("Trying to connect to database. Attempt: %v", i+1)
-		db, err = gorm.Open("postgres", connectionParams)
+	connectionWithDatabaseParams := "user=docker password=docker sslmode=disable host=db dbname=twilio_playground"
+
+	for i := 0; i < 30; i++ {
+		log.Printf("trying to connect to database, attempt: %v", i+1)
+		database, err = gorm.Open("postgres", connectionParams)
+		if err != nil {
+			time.Sleep(1 * time.Second)
+			continue
+		}
+
+		log.Printf("creating database '%v'", "twilio_playground")
+		database.Exec("CREATE DATABASE " + "twilio_playground")
+
+		database, err = gorm.Open("postgres", connectionWithDatabaseParams)
 		if err == nil {
 			break
 		}
-
-		time.Sleep(1 * time.Second)
 	}
 	if err != nil {
 		return
 	}
 
-	err = addDatabase(db, "twilio-playground")
-	if err != nil {
+	database.AutoMigrate(&models.Location{})
+	database.AutoMigrate(&models.Message{})
+	database.AutoMigrate(&models.User{})
+
+	return
+}
+
+// SaveToDatabase saves a message and returns a User
+func SaveToDatabase(address string, body string) (user models.User, err error) {
+	user = models.User{Address: address}
+	if result := database.Where(&models.User{Address: address}).FirstOrCreate(&user); result.Error != nil {
+		err = result.Error
 		return
 	}
 
-	// create table if it does not exist
-	if !db.HasTable(&models.Location{}) {
-		db.CreateTable(&models.Location{})
+	if result := database.Model(&user).Association("Messages").Append(models.Message{Body: body}); result.Error != nil {
+		err = result.Error
+		return
 	}
-	if !db.HasTable(&models.Message{}) {
-		db.CreateTable(&models.Message{})
-	}
-	if !db.HasTable(&models.User{}) {
-		db.CreateTable(&models.User{})
-	}
-
 	return
 }

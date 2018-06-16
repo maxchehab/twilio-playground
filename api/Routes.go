@@ -19,7 +19,6 @@ type Routes []Route
 
 // NewRouter creates a mux.Router from the constant `routes` struct
 func NewRouter() *mux.Router {
-
 	router := mux.NewRouter().StrictSlash(true)
 	for _, route := range routes {
 		router.

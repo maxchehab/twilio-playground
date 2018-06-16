@@ -13,7 +13,7 @@ type ConstantType struct {
 
 // Constants is a singleton representing the constants used in the application
 var Constants = ConstantType{
-	readLine("./secrets/AccountSid"),
+	readLine("../secrets/AccountSid"),
 }
 
 func readLine(path string) (line string) {
