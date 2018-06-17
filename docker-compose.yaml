@@ -20,16 +20,16 @@ services:
       - ./api:/go/src/github.com/user/twilio-playground/api
       - ./secrets:/go/src/github.com/user/twilio-playground/secrets
     ports:
-      - "3000:3000"
+      - "8080:8080"
     links:
       - db
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     args:
-  #       app_env: ${APP_ENV}
-  #   volumes:
-  #     - ./frontend/src:/frontend/src 
-  #   ports:
-  #     - "3000:3000"
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        app_env: ${APP_ENV}
+    volumes:
+      - ./frontend:/frontend 
+    ports:
+      - "3000:3000"

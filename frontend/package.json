@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/maxchehab/twilio-playground.git"
+  },
+  "version": "1.0.0",
+  "description": "Frontend.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Max Chehab",
+  "license": "ISC",
+  "dependencies": {
+    "next": "^6.0.3",
+    "react": "^16.4.1",
+    "react-dom": "^16.4.1"
+  }
+}
