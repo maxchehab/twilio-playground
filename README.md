@@ -13,7 +13,7 @@ Go to your [Twilio account dashboard](https://www.twilio.com/console) and copy-p
 Next [set up ngrok](https://dashboard.ngrok.com/get-started). Ngrok will help expose your local computer without any messy port forwarding.
 
 ```bash
-ngrok http 3000
+ngrok http 8080
 ```
 
 **Leave ngrok running in a seperate process**
