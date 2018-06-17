@@ -31,13 +31,16 @@ Text your Twilio number and you should recieve a response 😊.
 
 If you make changes to any docker-compose.yaml or dockerfile, run `make build`.
 
-Changing any code locally will also automatically update any changes.
+Go to http://localhost:3000 to view the [React/Next.js](https://github.com/zeit/next.js/) frontend.
+
+Changing **any** code locally will also automatically update any changes.
 
 To build production images run:
 
 ```
 docker build ./db
 docker build ./api --build-arg app_env=production
+docker build ./frontend --build-arg app_env=production
 ```
 
 or
@@ -46,4 +49,4 @@ or
 make prod
 ```
 
-The postgres database is persistantly saved in `db/pgdata/`. This is ommited from the git repository.
+_The postgres database is persistantly saved in `db/pgdata/`. This is ommited from the git repository._
